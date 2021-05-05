@@ -6,35 +6,38 @@ structure this app.
 ![The BLOC pattern](assets/bloc-pattern-for-flutter.png)
 
 The above diagram shows how the data flow from UI to the Data layer and 
-vice versa. BLOC will never have any reference of the Widgets in the 
+vice versa. `BLOC` will never have any reference of the Widgets in the 
 UI Screen. The UI screen will only observe changes coming from BLOC 
 class.
 
-### What is BLOC Pattern?
+##  What is BLOC Pattern?
 It's a state management system for Flutter recommended by Google developers. 
 It helps in managing state and make access to data from a central place in 
 your project.
 
-### Can I co-relate this architecture with any other architectures out there?
+## Can we relate this architecture with any other architectures out there?
 Yes of course. **MVP** and **MVVM** are some good examples. The Only thing that 
 changes, is: **BLOC will be replaced with ViewModel in MVVM**.
 
-### What is under the hood of BLOC ? or What is that core thing that manages the state in one place?
+## What is under the hood of BLOC ? or What is that core thing that manages the state in one place?
 STREAMS or REACTIVE approach. In general terms, data will be flowing from the 
 BLOC to the UI or from UI to the BLOC in the form of streams. 
 
->Write down the below code in your main.dart file:
+#### Add the following code to main.dart:
+```
 import 'package:flutter/material.dart';
 import 'src/app.dart';
 
 `void main(){
   runApp(App());
-}`
+}
 
->Create a src package under the lib package. Inside src package create a 
->file and name it as app.dart. Copy paste the below code inside the app.dart 
->file.
+```
 
+#### Create a src package under the lib package. 
+Inside this src folder add *app.dart* and copy the following:
+
+```
 import 'package:flutter/material.dart';
 import 'ui/movie_list.dart';
 
@@ -51,41 +54,49 @@ import 'ui/movie_list.dart';
   }
 }`
 
->Create a new package inside the src package and name it as resources.
+```
 
-Now create few new packages i.e **blocs**, **models**, **resources** 
-and **ui** as shown in the below diagram and then we are set with the 
-skeleton of the project:
+####  Create some additional packages inside the src folder:
+1. blocs
+2. models
+3. resources
+4. ui
+ 
+Our folder structure should now look like the diagram below:
 
 ![Project structure](assets/project-structure.png)
 
-blocs package will hold our BLOC implementation related files. models 
+**blocs** package will hold our BLOC implementation related files. **models** 
 package will hold the POJO class or the model class of the JSON response 
-we will be getting from the server. Resources package will hold the repository 
-class and the network call implemented class. ui package will hold our screens 
+we will be getting from the server. **Resources** package will hold the repository 
+class and the network call implemented class. **ui** package will hold our screens 
 that will be visible to the user.
 
->we have to add the RxDart third party library. 
+#### We have to add the RxDart library. 
 
 Dart comes with a very decent Streams API out-of-the-box; rather than attempting 
-to provide an alternative to this API, **RxDart** adds functionality from the 
-reactive extensions specification on top of it.
+to provide an alternative to this API, [RxDart](https://pub.dev/packages/rxdart)  
+adds functionality from the reactive extensions specification on top of it.
 
-> along with http: ^0.13.3
+Additionally we need to add the following dependency:
+
+
+``http: ^0.13.3``
 
 This package contains a set of high-level functions and classes that make it easy 
 to consume HTTP resources. It's multi-platform, and supports mobile, desktop, 
 and the browser.
 
-We have now completed the skeleton of the project. Time to deal with the most 
+We have now completed the skeleton of the project. It's now time to deal with the most 
 bottom layer of the project i.e the network layer. Let’s understand the API 
 end point which we are going to consume.
 
 ---
+## Network layer
 
-[hitting this url, get the below response](https://medium.com/codechai/architecting-your-flutter-project-bd04e144a8f1)
-
-`{
+hitting out request url returns the below response:
+```
+{
   "page": 1,
   "total_results": 19772,
   "total_pages": 989,
@@ -110,23 +121,22 @@ end point which we are going to consume.
       "adult": false,
       "overview": "As the Avengers and their allies have continued to protect the world from threats too large for any one hero to handle, a new danger has emerged from the cosmic shadows: Thanos. A despot of intergalactic infamy, his goal is to collect all six Infinity Stones, artifacts of unimaginable power, and use them to inflict his twisted will on all of reality. Everything the Avengers have fought for has led up to this moment - the fate of Earth and existence itself has never been more uncertain.",
       "release_date": "2018-04-25"
-    },`
+    },
+
+```    
+    
 
 Let’s build a model or POJO class for this type of response. Create a new file 
 inside the models package and name it as item_model.dart. Copy and paste the 
 below code inside item_model.dart file:
 
->[JSON to Dart](https://javiercbk.github.io/json_to_dart/)
+```[JSON to Dart](https://javiercbk.github.io/json_to_dart/)``
 
 See lib/models/item_model.dart for implementation
 
----
+Create a file inside the resources package and named **movie_api_provider.dart**.  Copy and 
+paste the below code inside the file:
 
->  Now its time to work on the network implementation. 
-
-Create a file inside the resources package and name it as 
-**movie_api_provider.dart**.  Copy and paste the below code inside the 
-file:
 ```
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -163,9 +173,11 @@ was successful or it will throw an Exception.
 
 ---
 
+##  Repository
+
 > We're now ready for our repository
  
-Inside the resources package create a fil name repository.dart. Copy and paste 
+Inside the resources package create a file name **repository.dart**. Copy and paste 
 the below code inside the file:
 
 ```
@@ -187,7 +199,7 @@ where the data will flow to the BLOC.**</u>
 
 ---
 
->Implementing the bloc logic.
+##  Implementing the bloc logic.
 
 Create a new file inside the blocs package and name it as **movies_bloc.dart.** 
 Copy paste below code:
@@ -250,9 +262,9 @@ This “observing" of new data can be done using **RxDart**.*
 
 ---
 
-> Now for the UI
+##  UI Layer
 
-Create a new file inside the ui package and name it as movie_list.dart. Copy 
+Create a new file inside the ui package and name it as `movie_list.dart`. Copy 
 paste the below code:
 
 ```
@@ -299,11 +311,10 @@ class MovieList extends StatelessWidget {
 
 ```
 
->## Best and interesting part of this class is, we're not using a 
->**StatefulWidget**. But instead, a StreamBuilder which will do the same job 
->that a StatefulWidget does i.e updating the UI.
+> Of Interest here, is that we're not using a `**StatefulWidget**`. But instead, a `StreamBuilder`
+> which will do the same job that a `StatefulWidget` does i.e updating the UI.
 
-One thing to point out here is that we are making a network call inside Widget build(): 
+*One thing to point out here is that we are making a network call inside Widget build():* 
  
  ```
   Widget build(BuildContext context) {
@@ -316,11 +327,11 @@ One thing to point out here is that we are making a network call inside Widget b
   }
 
 ```
- This should not be done, as the the build method can be called multiple times.  We
- will revisit this later on.
+ **This should not be done, as the the build method can be called multiple times.  We
+ will revisit this later on.**
  
  As previously noted, our MoviesBloc class is passing the new data as a stream. To
- accommodate this we make use of **StreamBuilder** which will listen to the incoming 
+ accommodate this we make use of `**StreamBuilder**` which will listen to the incoming 
  streams and update the UI accordingly:
  
  ````
@@ -346,6 +357,44 @@ snapshot data holds the ItemModel object.  We used a **GridView** to display all
 are in the results list of ItemModel object. 
 
 ---
+##  Code refactoring
+
+We will be addressing some of the flaws in the current architectural design and add some additional 
+features to the application.
+
+**Four issues we will be addressing in this refactoring are: **
+1. Solving the flaws in current architecture design
+2. Single Instance vs Scoped Instance (BLoC access)
+3. Navigation
+4. RxDart’s Transformers
+
+One of the first flaws is the addition of `**dispose()**` inside the **MoviesBloc.dart** class. This 
+method is responsible disposing all the streams which are open to avoid memory leaks. This method 
+has been created; however it's never called. This would be guaranteed to cause  a memory leak.
+
+Another major flaw is that we're making network calls inside the build method which is bad code 
+design.  The build method can be called several times and as a result, this network call will 
+*fire* everytime. Let’s remedy these two flaws.
+
+As our `MovieList` class is a `StatelessWidget`.  `Widget build(BuildContext context)` will be 
+called whenever it is added to the Widget tree and all its properties are `immutable`.
+
+We can make use of  [initState](https://api.flutter.dev/flutter/widgets/State/initState.html) and 
+[dispose](https://api.flutter.dev/flutter/widgets/State/dispose.html) in a **StatelessWidget** 
+which is provided by Flutter.
+
+`initState` is called when this object is inserted into the tree.  The framework will call this 
+method exactly once for each State object it creates. `dispose` Called when this object is removed 
+from the tree permanently.  The framework calls this method when this State object will never 
+build again.
+
+let’s convert our **MovieList** class from a `StatelessWidget` to a `StatefulWidget` and make the 
+network call inside `initState()` and MovieBloc’s `dispose()` inside the StatefulWidget’s 
+`dispose().`
+
+>Keypoint: Never make any network or db call inside the `build` method,
+>also, always make sure you dispose / close any open streams.
+
 
 ## Notes
 [doc source](https://medium.com/codechai/architecting-your-flutter-project-bd04e144a8f1)
