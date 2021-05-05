@@ -2,7 +2,30 @@ import 'package:flutter/material.dart';
 import '../models/item_model.dart';
 import '../blocs/movies_bloc.dart';
 
-class MovieList extends StatelessWidget {
+class MovieList extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _MovieListState();
+  }
+}
+
+class _MovieListState extends State<MovieList> {
+
+  //  Called when this object is inserted into the tree.
+  //  Make our network call here
+  @override
+  void initState() {
+    super.initState();
+    bloc.fetchAllMovies();
+  }
+
+  //  Dispose any resources here
+  @override
+  void dispose() {
+    bloc.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     bloc.fetchAllMovies();
@@ -24,6 +47,7 @@ class MovieList extends StatelessWidget {
     );
   }
 
+  //  Our grid builder
   Widget buildList(AsyncSnapshot<ItemModel> snapshot) {
     return GridView.builder(
         itemCount: snapshot.data.results.length,
